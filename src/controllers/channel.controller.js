@@ -32,43 +32,52 @@ const createChannel = asyncHandler(async (req, res) => {
 });
 
 const getChannels = asyncHandler(async (req, res) => {
-    const user = req.user?._id;
+    const userId = req.user?._id;
     try {
-        const userChannels = await Channel.findById({ user });
+        const userChannels = await Channel.findOne({
+            user: userId
+        });
         if (!userChannels) {
             return res.status(404).json(new ApiResponse(404, null, "No channels found"))
         }
         return res.status(200).json(new ApiResponse(200, userChannels, "Channels found successfully"))
     } catch (err) {
         console.log("Error getting channels", err);
+        res.status(500).json(new ApiResponse(500, err, "Error getting channels"))
     }
 });
 
 const updateChannels = asyncHandler(async (req, res) => {
-    const { channelName, accessToken, refreshToken, sub } = req.body;
-    const user = req.user?._id;
     const channel = {};
+    const { channelName, accessToken, refreshToken, sub } = req.body;
     if (channelName) channel.channelName = channelName;
-    if (accessToken) channel.accessToken = accessToken;
-    if (refreshToken) channel.refreshToken = refreshToken;
-    if (sub) channel.sub = sub;
+    else res.status(400).json(new ApiResponse(400, null, "Channel name is required"))
+    const userId = req.user?._id;
     if (!channelName && !accessToken && !refreshToken && !sub) {
-        return res.status(400).json(new ApiResponse(400, null, "All fields are required"))
+        return res.status(400).json(new ApiResponse(400, null, "Atleast one field is required"))
     }
     try {
-        const userChannel = await Channel.findById({ user });
+        const userChannel = await Channel.findOne({ user: userId });
+        console.log(userChannel)
         if (!userChannel) {
             return res.status(404).json(new ApiResponse(404, null, "No channels found"))
         }
-        const channelIndex = userChannel.channels.findIndex(ch => ch.channelName === channelName);
+        const channelIndex = userChannel.channels.findIndex(ch => {
+            console.log(ch.name, channelName)
+            return ch.name === channelName
+        });
+        console.log(channelIndex)
         if (channelIndex === -1) {
             return res.status(404).json(new ApiResponse(404, null, "Channel not found"))
         }
-        userChannel.channels[channelIndex] = channel;
+        if (accessToken) userChannel.channels[channelIndex].accessToken = accessToken;
+        if (refreshToken) userChannel.channels[channelIndex].refreshToken = refreshToken;
+        if (sub) userChannel.channels[channelIndex].sub = sub;
         await userChannel.save();
         return res.status(200).json(new ApiResponse(200, userChannel, "Channel updated successfully"))
     } catch (err) {
         console.log("Error updating channel", err);
+        res.status(500).json(new ApiResponse(500, err, "Error updating channel"))
     }
 })
 
