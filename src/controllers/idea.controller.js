@@ -4,7 +4,6 @@ import ApiError from '../utils/ApiError.js'
 import ApiResponse from '../utils/ApiResponse.js'
 import asyncHandler from '../utils/asyncHandler.js'
 import uploadAssetsOnCloudinary from '../utils/cloudinary.js'
-import e from 'express'
 
 const createIdea = asyncHandler(async (req, res) => {
     try {

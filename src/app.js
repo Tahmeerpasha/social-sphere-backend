@@ -44,8 +44,9 @@ app.use(cookieParser());
 // routes import 
 import userRouter from './routes/user.routes.js'
 import ideaRouter from './routes/idea.routes.js'
+import channelRouter from './routes/channel.routes.js'
 // routes declaration
 app.use("/api/v1/users", userRouter)
 app.use("/api/v1/ideas", ideaRouter)
-
+app.use("/api/v1/users/channel", channelRouter)
 export default app;
