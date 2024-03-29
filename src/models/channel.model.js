@@ -1,22 +1,5 @@
 import mongoose from "mongoose"
 
-const accountSchema = new mongoose.Schema({
-    name: {
-        type: string,
-        required: true,
-    },
-    accessToken: {
-        type: string,
-        required: true,
-    },
-    refreshToken: {
-        type: string,
-    },
-    sub: {
-        type: string,
-    },
-})
-
 const channelSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
@@ -24,7 +7,22 @@ const channelSchema = new mongoose.Schema({
         require: true
     },
     channels: {
-        type: accountSchema,
+        type: [{
+            name: {
+                type: String,
+                required: true,
+            },
+            accessToken: {
+                type: String,
+                required: true,
+            },
+            refreshToken: {
+                type: String,
+            },
+            sub: {
+                type: String,
+            },
+        }],
         require: true,
         trim: true
     }

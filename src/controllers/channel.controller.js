@@ -5,12 +5,13 @@ import asyncHandler from '../utils/asyncHandler.js'
 const createChannel = asyncHandler(async (req, res) => {
     const { accessToken, channelName } = req.body;
     const user = req.user?._id;
-    const channel = { channelName, accessToken };
+    if (!user) return res.status(401).json(new ApiResponse(401, null, "Unauthorized"));
+    const channel = { name: channelName, accessToken: accessToken };
     if (!channelName || !accessToken) {
         return res.status(400).json(new ApiResponse(400, null, "All fields are required"))
     }
     try {
-        const userChannel = await Channel.findById({ user });
+        const userChannel = await Channel.findOne({ user: user });
         if (userChannel) {
             userChannel.channels.push(channel);
             await userChannel.save();
@@ -26,6 +27,7 @@ const createChannel = asyncHandler(async (req, res) => {
         return res.status(201).json(new ApiResponse(201, newChannel, "Channel created successfully"))
     } catch (err) {
         console.log("Error creating channel", err);
+        res.status(500).json(new ApiResponse(500, err, "Error creating channel"))
     }
 });
 
