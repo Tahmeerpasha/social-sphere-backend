@@ -30,7 +30,7 @@ export const generateLinkedInAccessToken = asyncHandler(async (req, res) => {
             throw new ApiError(response.status, 'An error occurred while processing your request');
     } catch (error) {
         console.error('Error proxying request:', error);
-        res.status(error.statusCode).json({ error: 'An error occurred while processing your request' });
+        res.status(error.response.status).json({ error: 'An error occurred while processing your request' });
     }
 });
 
@@ -52,6 +52,6 @@ export const getUserInfo = asyncHandler(async (req, res) => {
 
     } catch (error) {
         console.error('Error proxying request:', error);
-        res.status(error.statusCode).json({ error: 'An error occurred while processing your request' });
+        res.status(error.response.status).json({ error: error.response.statusText });
     }
 })
