@@ -45,8 +45,10 @@ app.use(cookieParser());
 import userRouter from './routes/user.routes.js'
 import ideaRouter from './routes/idea.routes.js'
 import channelRouter from './routes/channel.routes.js'
+import linkedInRouter from "./routes/linkedIn.routes.js";
 // routes declaration
 app.use("/api/v1/users", userRouter)
 app.use("/api/v1/ideas", ideaRouter)
 app.use("/api/v1/users/channel", channelRouter)
+app.use("/api/v1/linkedIn", linkedInRouter)
 export default app;
