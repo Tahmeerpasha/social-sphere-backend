@@ -8,9 +8,19 @@ const channelSchema = new mongoose.Schema({
     },
     channels: {
         type: [{
-            name: {
+            channelName: {
                 type: String,
-                required: true,
+                enum: ["Facebook", "Twitter", "Instagram", "LinkedIn"],
+                required: true
+            },
+            userName: {
+                type: String
+            },
+            userEmail: {
+                type: String
+            },
+            profilePicture: {
+                type: String
             },
             accessToken: {
                 type: String,

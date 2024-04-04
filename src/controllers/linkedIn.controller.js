@@ -47,6 +47,10 @@ export const getUserInfo = asyncHandler(async (req, res) => {
                 },
             }
         );
+
+        // Store the images in channels db
+
+
         if (response.status === 200) return res.status(200).json(new ApiResponse(200, response.data, 'User info fetched successfully'));
         else throw new ApiError(response.status, 'An error occurred while processing your request');
 
