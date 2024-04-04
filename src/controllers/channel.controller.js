@@ -105,5 +105,35 @@ const updateChannels = asyncHandler(async (req, res) => {
     }
 });
 
+const getChannel = asyncHandler(async (req, res) => {
+    const userId = req.user?._id;
+    const channelName = req.query.channelName;
+    if (!userId) return res.status(401).json(new ApiResponse(401, null, "Unauthorized"));
+    if (!channelName) return res.status(400).json(new ApiResponse(400, null, "Channel name is required"));
+    try {
+        const userChannel = await Channel.findOne
+            ({
+                user: userId,
+                "channels.channelName": channelName
+            });
+        if (!userChannel) {
+            return res.status(404).json(new ApiResponse(404, null, "Channel not found"))
+        }
+        // Find the matching channel within the channels array
+        const channel = userChannel.channels.find(ch => ch.channelName === channelName);
 
-export { createChannel, getChannels, updateChannels }
+        if (!channel) {
+            return res.status(404).json(new ApiResponse(404, null, "Channel not found within user channels"));
+        }
+
+        return res.status(200).json(new ApiResponse(200, channel, "Channel found successfully"))
+    } catch (err) {
+        console.log("Error getting channel", err);
+        res.status(500).json(new ApiResponse(500, err, "Error getting channel"))
+    }
+}
+);
+
+
+
+export { createChannel, getChannels, updateChannels, getChannel }
