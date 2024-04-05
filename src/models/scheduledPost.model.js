@@ -1,11 +1,15 @@
 import mongoose from "mongoose"
 
 const scheduledPostSchema = new mongoose.Schema({
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true
+    },
     body: {
         type: String,
         required: true,
         trim: true,
-        // maxlength: 500
     },
     media: [{
         url: {
@@ -14,11 +18,6 @@ const scheduledPostSchema = new mongoose.Schema({
         },
         alt: { type: String }
     }],
-    userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        required: true
-    },
     socials: {
         type: [{
             social: {
