@@ -5,6 +5,60 @@ import ApiResponse from '../utils/ApiResponse.js'
 import asyncHandler from '../utils/asyncHandler.js'
 import uploadAssetsOnCloudinary from '../utils/cloudinary.js'
 
+/*
+const createIdea = asyncHandler(async (req, res) => {
+    try {
+        const { ideaContent } = req.body
+        const ideaImagePath = req.file?.path
+        if (!ideaImagePath)
+            throw new ApiError(400, "Image is required")
+
+        if ([ideaContent, ideaImagePath].some((field) => field?.trim() === "")) {
+            throw new ApiError(400, "All fields are required")
+        }
+        const ideaImage = await uploadAssetsOnCloudinary(ideaImagePath)
+        const ideaObject = {
+            content: ideaContent,
+            image: ideaImage?.url
+        }
+        const existingIdea = Idea.findOne({ user: req.user?._id })
+        if (existingIdea) {
+            // If Idea array already exists for the user then push the new idea to the array
+            existingIdea.ideas.push(ideaObject)
+            await existingIdea.save()
+            return res.status(201).json(
+                new ApiResponse(201, existingIdea, "Idea added to ideas array successfully")
+            )
+        } else {
+            // If Idea array doesn't exist for the user then create a new Idea array
+            const idea = await Idea.create({
+                user: req.user?._id,
+                ideas: [ideaObject]
+            })
+            if (!idea)
+                throw new ApiError(500, "Error creating idea in the database")
+
+            return res.status(201).json(
+                new ApiResponse(201, idea, "Idea created successfully")
+            )
+        }
+    } catch (error) {
+        console.log("Error occured in creating idea", error);
+        if (error.message === "Image is required")
+            return res.status(400).json(
+                new ApiResponse(400, null, "Image is required")
+            )
+        else if (error.message === "All fields are required")
+            return res.status(400).json(
+                new ApiResponse(400, null, "All fields are required")
+            )
+        else
+            return res.status(500).json(
+                new ApiResponse(500, null, "Internal Server Error occured in creating idea")
+            )
+    }
+});
+*/
 const createIdea = asyncHandler(async (req, res) => {
     try {
         const { ideaContent } = req.body
