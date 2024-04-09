@@ -1,41 +1,38 @@
 import mongoose from "mongoose"
 
 const scheduledPostSchema = new mongoose.Schema({
-    userId: {
+    user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true
     },
-    body: {
-        type: String,
-        required: true,
-        trim: true,
-    },
-    media: [{
-        url: {
-            type: String,
-            required: true
-        },
-        alt: { type: String }
-    }],
-    socials: {
+    posts: {
         type: [{
-            social: {
-                type: String,
-                enum: ["Facebook", "Twitter", "Instagram", "LinkedIn"],
-                required: true
+            channel: {
+                type: mongoose.Types.ObjectId,
+                ref: "Channel",
+                required: true,
             },
-            accessToken: {
+            content: {
                 type: String,
+                required: true,
+                trim: true,
+            },
+            media: [{
+                url: {
+                    type: String,
+                    required: true
+                },
+                alt: { type: String }
+            }],
+            scheduledAt: {
+                type: Date,
                 required: true
             },
         }],
         required: true,
-    },
-    scheduledAt: {
-        type: Date,
-        required: true
-    },
+        default: []
+    }
 }, { timestamps: true })
 
 export const ScheduledPost = mongoose.model('ScheduledPost', scheduledPostSchema)

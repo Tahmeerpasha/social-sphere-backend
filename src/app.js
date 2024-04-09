@@ -46,9 +46,15 @@ import userRouter from './routes/user.routes.js'
 import ideaRouter from './routes/idea.routes.js'
 import channelRouter from './routes/channel.routes.js'
 import linkedInRouter from "./routes/linkedIn.routes.js";
+import scheduledPost from "./routes/scheduledPost.routes.js";
+import post from "./routes/post.routes.js";
+
 // routes declaration
 app.use("/api/v1/users", userRouter)
 app.use("/api/v1/ideas", ideaRouter)
 app.use("/api/v1/users/channel", channelRouter)
 app.use("/api/v1/linkedIn", linkedInRouter)
+app.use("/api/v1/scheduledPosts", scheduledPost)
+app.use("/api/v1/posts", post)
+
 export default app;
