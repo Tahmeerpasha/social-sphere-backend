@@ -4,7 +4,7 @@ const channelSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
-        require: true
+        required: true
     },
     channels: {
         type: [{
@@ -33,7 +33,7 @@ const channelSchema = new mongoose.Schema({
                 type: String,
             },
         }],
-        require: true,
+        required: true,
         trim: true
     }
 }, { timestamps: true })
