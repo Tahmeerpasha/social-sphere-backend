@@ -129,7 +129,10 @@ export const publishPostWithTextAndMedia = asyncHandler(async (req, res) => {
                 await uploadMedia(uploadUrl, mediaPath, req.file.mimetype, linkedInAccessToken);
                 const response = await createMediaShare(mediaType, asset, matchingChannel.sub, content, visibility, linkedInAccessToken);
                 console.log(response)
-                return res.status(200).json(new ApiResponse(200, response.data, 'Post published successfully'));
+                if (response.status === 201) {
+                    fs.unlinkSync(mediaPath);
+                    return res.status(201).json(new ApiResponse(201, response.data, 'Post published successfully'));
+                }
             } else {
                 console.log('No subdocument found within the channel with the provided access token.');
                 throw new ApiError(404, 'No sub document channel found with the provided access token.');
@@ -143,6 +146,54 @@ export const publishPostWithTextAndMedia = asyncHandler(async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 })
+
+export const publishPostWithTextAndMediaServerless = asyncHandler(async (req, res) => {
+    try {
+        const { post, userId } = req.body;
+        const content = post.content;
+        const visibility = "PUBLIC";
+        const media = post.media[0];
+        const mediaPath = fs.readFileSync(media.url);
+        const mediaType = media.alt.split('.').pop();
+
+        console.log("Post contents", mediaType, mediaPath, content, visibility, userId, post);
+
+        if (!content) throw new Error('Text is required');
+        if (!mediaPath) throw new Error('Media is required');
+
+        const channel = await Channel.findOne({ user: userId });
+
+        if (channel) {
+            // Access the desired property from the matching subdocument
+            const matchingChannel = channel.channels.find(ch => ch.channelName === "LinkedIn");
+            if (matchingChannel) {
+                console.log('Found channel:', matchingChannel);
+                const linkedInAccessToken = matchingChannel.accessToken;
+                const { uploadUrl, asset } = await registerMedia("IMAGE", matchingChannel.sub, linkedInAccessToken);
+                await uploadMedia(uploadUrl, mediaPath, mediaType, linkedInAccessToken);
+                const response = await createMediaShare("IMAGE", asset, matchingChannel.sub, content, visibility, linkedInAccessToken);
+                const data = await response.data;
+                console.log(data);
+                console.log("================================================================")
+                if (response.status === 201) {
+                    fs.unlinkSync(mediaPath);
+                    return res.status(201).json(new ApiResponse(201, data, 'Post published successfully'));
+                }
+                else return res.status(response.status).json(new ApiResponse(response.status, response.data, 'An error occurred while processing your request'));
+            } else {
+                console.log('No subdocument found within the channel with the provided access token.');
+                throw new ApiError(404, 'No sub document channel found with the provided access token.');
+            }
+        } else {
+            console.log('No channel found with the provided access token.');
+            throw new ApiError(404, 'No channel found with the provided access token.');
+        }
+    } catch (error) {
+        console.error('Error proxying request:', error.message);
+        res.status(500).json({ error: error.message });
+    }
+})
+
 
 
 const registerMedia = async (mediaType, author, accessToken) => {
