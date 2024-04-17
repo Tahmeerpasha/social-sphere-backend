@@ -4,6 +4,9 @@ FROM node:20
 # Set the working directory in the container
 WORKDIR /usr/src/app
 
+# Create public directory and grant write access
+RUN mkdir -p public/temp && chmod -R 777 public
+
 # Copy package.json and package-lock.json to the working directory
 COPY package*.json ./
 
