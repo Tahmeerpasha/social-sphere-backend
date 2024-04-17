@@ -3,6 +3,36 @@ import { ScheduledPost } from '../models/scheduledPost.model.js';
 import ApiResponse from '../utils/ApiResponse.js';
 import asyncHandler from '../utils/asyncHandler.js'
 
+
+function createUTCTime(input) {
+    // Convert input to lowercase for case-insensitive comparison
+    input = input.toLowerCase();
+
+    // Get current date
+    const currentDate = new Date();
+
+    // Initialize hours and minutes
+    let hours, minutes;
+
+    // Determine if input is AM or PM
+    if (input.includes("am")) {
+        hours = 0; // 12am is equivalent to 00:00
+        minutes = 0;
+    } else if (input.includes("pm")) {
+        hours = 12; // 12pm is equivalent to 12:00
+        minutes = 0;
+    } else {
+        throw new Error("Invalid input. Please provide either '12am' or '12pm'.");
+    }
+
+    // Set hours and minutes to current date
+    currentDate.setUTCHours(hours);
+    currentDate.setUTCMinutes(minutes);
+
+    // Return the date in UTC format
+    return currentDate.toISOString();
+}
+
 const createScheduledPost = asyncHandler(async (req, res) => {
     try {
         const { content, channelName, scheduledAt } = req.body;
@@ -28,11 +58,12 @@ const createScheduledPost = asyncHandler(async (req, res) => {
         }
 
         // Add the new post to the existing array or newly created array
+        const scheduledAtUTC = createUTCTime(scheduledAt);
         scheduledPost.posts.push({
             channel: channel._id,
             content,
             media,
-            scheduledAt
+            scheduledAtUTC
         });
 
         // Save the updated scheduledPost document
