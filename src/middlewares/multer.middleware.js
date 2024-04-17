@@ -3,7 +3,7 @@ import multer from "multer";
 const storage = multer.diskStorage({
     destination: function (_, file, cb) {
         console.log("Uploading file....")
-        cb(null, "/tmp/");
+        cb(null, process.env.FILE_UPLOAD_PATH);
     },
     filename: function (_, file, cb) {
         cb(null, file.originalname);

@@ -10,7 +10,7 @@ const channelSchema = new mongoose.Schema({
         type: [{
             channelName: {
                 type: String,
-                enum: ["Facebook", "Twitter", "Instagram", "LinkedIn"],
+                enum: ["Facebook", "Twitter", "Instagram", "LinkedIn", "YouTube"],
                 required: true
             },
             userName: {

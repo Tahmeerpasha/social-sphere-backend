@@ -63,7 +63,7 @@ const createScheduledPost = asyncHandler(async (req, res) => {
             channel: channel._id,
             content,
             media,
-            scheduledAtUTC
+            scheduledAt: scheduledAtUTC
         });
 
         // Save the updated scheduledPost document

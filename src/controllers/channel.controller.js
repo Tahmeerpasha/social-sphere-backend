@@ -3,7 +3,7 @@ import ApiResponse from '../utils/ApiResponse.js';
 import asyncHandler from '../utils/asyncHandler.js'
 
 const createChannel = asyncHandler(async (req, res) => {
-    const channelNames = ["Facebook", "Twitter", "Instagram", "LinkedIn"];
+    const channelNames = ["Facebook", "Twitter", "Instagram", "LinkedIn", "YouTube"];
     const { accessToken, channelName } = req.body;
     const user = req.user?._id;
 

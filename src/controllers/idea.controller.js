@@ -3,7 +3,7 @@ import { Idea } from '../models/idea.model.js'
 import ApiError from '../utils/ApiError.js'
 import ApiResponse from '../utils/ApiResponse.js'
 import asyncHandler from '../utils/asyncHandler.js'
-import uploadAssetsOnCloudinary from '../utils/cloudinary.js'
+import { uploadAssetsOnCloudinary, deleteAssetsOnCloudinary } from '../utils/cloudinary.js'
 
 /*
 const createIdea = asyncHandler(async (req, res) => {
@@ -243,6 +243,22 @@ const deleteIdeaById = asyncHandler(async (req, res) => {
         const deletedIdea = await Idea.findByIdAndDelete(ideaId);
         if (!deletedIdea)
             throw new ApiError(500, "Error deleting idea in the database");
+        const url = deletedIdea.image;
+        // Split the URL by the '/' character
+        const parts = url.split('/');
+
+        // Find the index of the 'upload' segment
+        const uploadIndex = parts.indexOf('upload');
+
+        // If 'upload' segment exists, the public ID is the next segment
+        if (uploadIndex !== -1 && uploadIndex < parts.length - 1) {
+            const publicId = parts[uploadIndex + 1];
+            console.log("Public ID:", publicId);
+            await deleteAssetsOnCloudinary(publicId)
+            console.log("Deleted from Cloudinary successfully")
+        } else {
+            console.log("Invalid Cloudinary URL");
+        }
         return res.status(200).json(
             new ApiResponse(200, deletedIdea, "Idea deleted successfully")
         );
