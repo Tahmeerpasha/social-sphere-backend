@@ -48,7 +48,7 @@ import channelRouter from './routes/channel.routes.js'
 import linkedInRouter from "./routes/linkedIn.routes.js";
 import scheduledPost from "./routes/scheduledPost.routes.js";
 import post from "./routes/post.routes.js";
-
+import youtubeRouter from "./routes/youtube.routes.js"
 // routes declaration
 app.use("/api/v1/users", userRouter)
 app.use("/api/v1/ideas", ideaRouter)
@@ -56,5 +56,5 @@ app.use("/api/v1/users/channel", channelRouter)
 app.use("/api/v1/linkedIn", linkedInRouter)
 app.use("/api/v1/scheduledPosts", scheduledPost)
 app.use("/api/v1/posts", post)
-
+app.use("/api/v1/youtube", youtubeRouter)
 export default app;
