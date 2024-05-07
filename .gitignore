@@ -7,9 +7,9 @@ yarn-error.log*
 lerna-debug.log*
 .pnpm-debug.log*
 
-# Files from server
-src/utils/client_secrets.json
-src/utils/token.json
+# # Files from server
+# src/utils/client_secrets.json
+# src/utils/token.json
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
