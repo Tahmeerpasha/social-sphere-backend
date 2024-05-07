@@ -3,7 +3,7 @@ import fs from 'fs';
 import asyncHandler from "../utils/asyncHandler.js";
 import ApiResponse from "../utils/ApiResponse.js";
 
-const getOAuth2Client = () => {
+const getOAuth2Client = (index) => {
     return new Promise((resolve, reject) => {
         fs.readFile("src/utils/client_secrets.json", (err, content) => {
             if (err) {
@@ -16,7 +16,7 @@ const getOAuth2Client = () => {
             const oAuth2Client = new google.auth.OAuth2(
                 client_id,
                 client_secret,
-                redirect_uris[0]
+                redirect_uris[index]
             );
             resolve(oAuth2Client);
         });
@@ -61,7 +61,7 @@ const uploadVideoToYoutube = asyncHandler(async (req, res) => {
     }
 
     try {
-        const oAuth2Client = await getOAuth2Client();
+        const oAuth2Client = await getOAuth2Client(2);
         const token = await getToken(oAuth2Client, code);
         oAuth2Client.setCredentials(token);
 
@@ -77,10 +77,11 @@ const uploadVideoToYoutube = asyncHandler(async (req, res) => {
 });
 
 const generateYoutubeAuthorizeUrl = asyncHandler(async (req, res) => {
-    const { scope } = req.body;
-
+    const { scope, index } = req.body;
+    if (!index)
+        return res.status(400).json(new ApiResponse(400, "Please provide index of redirect uri"));
     try {
-        const oAuth2Client = await getOAuth2Client();
+        const oAuth2Client = await getOAuth2Client(index);
         const authUrl = oAuth2Client.generateAuthUrl({
             access_type: "offline",
             scope: scope
@@ -100,7 +101,7 @@ const getYoutubeAnalytics = asyncHandler(async (req, res) => {
     }
 
     try {
-        const oAuth2Client = await getOAuth2Client();
+        const oAuth2Client = await getOAuth2Client(3);
         const token = await getToken(oAuth2Client, code);
         oAuth2Client.setCredentials(token);
 
@@ -109,7 +110,7 @@ const getYoutubeAnalytics = asyncHandler(async (req, res) => {
         const data = await youtubeAnalytics.reports.query({
             endDate,
             ids: "channel==MINE",
-            metrics: "views,estimatedMinutesWatched,likes,subscribersGained",
+            metrics: "views,comments,likes,dislikes,averageViewDuration,estimatedMinutesWatched,subscribersGained",
             startDate
         });
 
